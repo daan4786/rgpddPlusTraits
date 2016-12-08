@@ -17,19 +17,30 @@ For more information on the package 'rgpdd,' see https://github.com/ropensci/rgp
 devtools::install_github("rgpddPlusTraits")
 library(rgpddPlusTraits)
 
+# While rgpddPlusTraits has functions to integrate the trait/temperature data with the GPDD meta data tables, in order to work with the actual time series data you must load the package rgpdd.
+devtools::install_github("rgpdd")
+library(rgpdd)
+
 library(dplyr)
 library(ggplot2)
 ```
 
 ### Integrate life history data with gpdd main table using function available in rgpddPlusTraits.
 ```
-data <- gpdd_taxon_life_history(taxon=TRUE, main=TRUE, sources=FALSE)
+life_history <- gpdd_taxon_life_history(taxon=TRUE, main=TRUE, sources=FALSE)
 ```
-### An example plot of time series length vs. body mass.
+### An example analysis looking at the body mass dependence of average abundance of mammals, birds, and fish.
 ```
-ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + 
-geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass)) + 
-geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency)))), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10() + ylab("Dataset length (yr)") + xlab("Body mass (kg)")
+# Calculate average population size of each time series, which are in the rgpdd package data table gpdd_data 
+avg_abundance <- rgpdd::gpdd_data %>% group_by(MainID) %>% summarize(avg_abundance = mean(PopulationUntransformed)) 
+
+# Join with life history data for plotting
+avg_abundance_life_history <- dplyr::left_join(avg_abundance, life_history, by = "MainID")
+
+ggplot(dplyr::filter(avg_abundance_life_history, DatasetLength > 20, (TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes"))) + 
+geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + 
+geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F, color = "black")
++ scale_x_log10() + scale_y_log10() + ylab("Average abundance (variable spatial units)") + xlab("Body Mass (kg)")
 ```
 
 
