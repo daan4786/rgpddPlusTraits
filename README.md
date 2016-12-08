@@ -43,6 +43,6 @@ geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F, color = 
 + scale_x_log10() + scale_y_log10() + ylab("Average abundance (variable spatial units)") + xlab("Body Mass (kg)")
 ```
 
-![Alt text](/rgpddPlusTraits/Example_plot.pdf?raw=true "")
+![Alt text](rgpddPlusTraits/Example_plot.png?raw=TRUE)
 
 
