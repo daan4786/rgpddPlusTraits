@@ -17,7 +17,8 @@ For more information on the package 'rgpdd,' see https://github.com/ropensci/rgp
 devtools::install_github("rgpddPlusTraits")
 library(rgpddPlusTraits)
 
-# While rgpddPlusTraits has functions to integrate the trait/temperature data with the GPDD meta data tables, in order to work with the actual time series data you must load the package rgpdd.
+# While rgpddPlusTraits has functions to integrate the trait/temperature data with the GPDD meta data tables, 
+# in order to work with the actual time series data you must load the package rgpdd.
 devtools::install_github("rgpdd")
 library(rgpdd)
 
