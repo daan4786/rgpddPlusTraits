@@ -1,360 +1,282 @@
-abline(v=obs.coefs[2],col="white",lwd=2)
-obs.coefs[2]
-hist(bootstrap.res[,2],main="Temperature Exponent",col="black")
-hist(bootstrap.res[,4],main="Intercept",col="black")
-# Bootstrap along the 10000 subsamples#
-for(i in 1:1000){#
-	rsamp	<-	sample(ntot,10)#
-	ith.df	<-	bootstrap.df[rsamp,]#
-	ith.mod	<-	lm(log(Cycle_length_yr)~Temp,data=ith.df)#
-	ith.mod.sum	<-	summary(ith.mod)#
-	bootstrap.res[i,c(4,2)]	<-	coef(ith.mod)#
-	bootstrap.res[i,c(3,5)]	<-	ith.mod.sum$coefficients[,4]#
-	bootstrap.res[i,6]			<-	ith.mod.sum$r.squared#
+filtered_main %>% filter(Spect_linear_log_StatisticalSignificance < 0.1) %>% mutate(perg = SiblyReturnRate / age_first_reproduction_years) %>% ggplot() + geom_point(aes(x = log(perg), y = log(Spect_linear_log_Period))) + geom_smooth(aes(x = log(perg), y = log(Spect_linear_log_Period)), method="lm", color = "black", se = F)
+filtered_main %>% filter(Spect_loess_log_StatisticalSignificance < 0.1) %>% mutate(perg = SiblyReturnRate / age_first_reproduction_years) %>% ggplot() + geom_point(aes(x = log(perg), y = log(Spect_loess_log_Period))) + geom_smooth(aes(x = log(perg), y = log(Spect_loess_log_Period)), method="lm", color = "black", se = F)
+Sibcorr <- filtered_main %>% mutate(perg = SiblyReturnRate / age_first_reproduction_years) %>% filter(Auto_linear_StatisticalSignificance4 %in% stat) %>% ggplot() + geom_point(aes(x = log(Mass_kg), y = log(perg))) + geom_smooth(aes(x = log(Mass_kg), y = log(perg)), method="lm", color = "black", se = F) + ylab("Log Per generation strength of DD") + xlab("Log Body mass (kg)") + xlim(c(-17, 6)) + theme(text=element_text(size=20), axis.line.x = element_line(size=0.5, linetype="solid", color="black"), axis.line.y = element_line(size=0.5, linetype="solid", color="black"), panel.background = element_blank())
+Sibcorr
+filtered_main %>% ungroup() %>% do(tidy(lm(log(SiblyReturnRate) ~ log(Mass_kg) + Temp, data = .)))
+exp <- filtered_main %>% ungroup() %>% mutate(perg = SiblyReturnRate / age_first_reproduction_years) %>% do(tidy(lm(log(perg) ~ log(Mass_kg) + Temp, data = .)))
+exp
+filtered_main %>% ungroup() %>% filter(Auto_linear_StatisticalSignificance4 %in% stat)  %>% mutate(perg = SiblyReturnRate / age_first_reproduction_years) %>% do(tidy(lm(log(perg) ~ log(Mass_kg) + Temp, data = .)))
+filtered_main %>% ungroup() %>% filter(Auto_linear_StatisticalSignificance4 %in% stat)  %>% mutate(perg = SiblyReturnRate / age_first_reproduction_years) %>% do(tidy(lm(log(perg) ~ log(Mass_kg), data = .)))
+filtered_main %>% ungroup() %>% filter(Auto_linear_StatisticalSignificance4 %in% stat) %>% do(tidy(lm(log(SiblyReturnRate) ~ log(Mass_kg) + Temp, data = .)))
+lit_cycles %>% ggplot() + geom_point(aes(x = log(Length_series), y = log(Cycle_length_yr))) + theme(text=element_text(size=15))  + ylab("log Cycle Length yr") + xlab("log Length series yr")
+lit_cycles %>% ggplot() + geom_point(aes(x = Length_series, y = Cycle_length_yr)) + theme(text=element_text(size=20), axis.line.x = element_line(size=0.5, linetype="solid", color="black"), axis.line.y = element_line(size=0.5, linetype="solid", color="black"), panel.background = element_blank()) + ylab("Cycle Period (yr)") + xlab("Length series (yr)") + scale_x_log10() + scale_y_log10()
+lit_cycles %>% ggplot() + geom_point(aes(x = age_first_reproduction_years, y = Length_series)) + ylab("Time series length (yr)") + xlab("Generation time (yr)") + scale_x_log10() + scale_y_log10() + theme(text=element_text(size=20), axis.line.x = element_line(size=0.5, linetype="solid", color="black"), axis.line.y = element_line(size=0.5, linetype="solid", color="black"), panel.background = element_blank())
+gt_ser <- lit_cycles %>% ggplot() + geom_point(aes(x = age_first_reproduction_years, y = Length_series)) + ylab("Time series length (yr)") + xlab("Generation time (yr)") + scale_x_log10() + scale_y_log10() + theme(text=element_text(size=20), axis.line.x = element_line(size=0.5, linetype="solid", color="black"), axis.line.y = element_line(size=0.5, linetype="solid", color="black"), panel.background = element_blank())#
+#
+ser_cp <- lit_cycles %>% ggplot() + geom_point(aes(x = Length_series, y = Cycle_length_yr)) + theme(text=element_text(size=20), axis.line.x = element_line(size=0.5, linetype="solid", color="black"), axis.line.y = element_line(size=0.5, linetype="solid", color="black"), panel.background = element_blank()) + ylab("Cycle Period (yr)") + xlab("Length series (yr)") + scale_x_log10() + scale_y_log10()#
+#
+grid.arrange(gt_ser, ser_cp, nrow=1)
+gt_ser <- lit_cycles %>% ggplot() + geom_point(aes(x = age_first_reproduction_years, y = Length_series)) + ylab("Time series length (yr)") + xlab("Generation time (yr)") + scale_x_log10() + scale_y_log10() + theme(text=element_text(size=20), axis.line.x = element_line(size=0.5, linetype="solid", color="black"), axis.line.y = element_line(size=0.5, linetype="solid", color="black"), panel.background = element_blank())#
+#
+ser_cp <- lit_cycles %>% ggplot() + geom_point(aes(x = Length_series, y = Cycle_length_yr)) + theme(text=element_text(size=20), axis.line.x = element_line(size=0.5, linetype="solid", color="black"), axis.line.y = element_line(size=0.5, linetype="solid", color="black"), panel.background = element_blank()) + ylab("Cycle Period (yr)") + xlab("Time series length (yr)") + scale_x_log10() + scale_y_log10()#
+#
+grid.arrange(gt_ser, ser_cp, nrow=1)
+source("https://bioconductor.org/biocLite.R")
+biocLite()
+download.file("http://www.datacarpentry.org/semester-biology/data/collar-data-2016-01.zip", "collar-data-2016-01.zip")
+unzip("collar-data-2016-01.zip")
+head(collar_data_files)
+collar_data_files
+collar_data_files <- list.files('.', 'collar-data-.*.txt') #.* could be anything
+collar_data_files
+num_samps <- c()#
+for(data_file in collar_data_files){#
+	data <- read.csv(data_file)#
+	samples <- nrow(data)#
+	num_samps <- c(num_samps, samples)#
+}
+num_samps
+#use function to do same thing#
+get_num_samps <- function(file_name){#
+	data <- read.csv(data_file)#
+	samples <- nrow(data)#
+	return(samples)#
 }#
 #
-obs<-lm(log(CV) ~ Temp, data = data)#
-#
-obs.coefs	<-	coef(obs)#
-#
-par(mfrow=c(2,1))#
-hist(bootstrap.res[,2],main="Temperature Exponent",col="black")#
-abline(v=obs.coefs[2],col="white",lwd=2)#
-hist(bootstrap.res[,4],main="Intercept",col="black")#
-abline(v=obs.coefs[1],col="white",lwd=2)
-mean(bootstrap.res[,2]) - obs.coefs[2]
-mean(bootstrap.res[,2])
-bootstrap.res[,2]
-mean(bootstrap.res[,2], na.rm=T) - obs.coefs[2]
-# Bootstrap along the 10000 subsamples#
-for(i in 1:1000){#
-	rsamp	<-	sample(ntot,20)#
-	ith.df	<-	bootstrap.df[rsamp,]#
-	ith.mod	<-	lm(log(Cycle_length_yr)~Temp,data=ith.df)#
-	ith.mod.sum	<-	summary(ith.mod)#
-	bootstrap.res[i,c(4,2)]	<-	coef(ith.mod)#
-	bootstrap.res[i,c(3,5)]	<-	ith.mod.sum$coefficients[,4]#
-	bootstrap.res[i,6]			<-	ith.mod.sum$r.squared#
+num_samps <- c()#
+for (data_file in collar_data_files){#
+	num_samps <- c(num_samps, get_num_samps(data_file))#
+}
+num_samps <- sapply(collar_data_files, get_num_samps)
+num_samps
+#use function to do same thing#
+get_num_samps <- function(file_name){#
+	data <- read.csv(data_file)#
+	samples <- nrow(data)#
+	return(samples)#
 }#
 #
-obs<-lm(log(CV) ~ Temp, data = data)#
-#
-obs.coefs	<-	coef(obs)#
-#
-par(mfrow=c(2,1))#
-hist(bootstrap.res[,2],main="Temperature Exponent",col="black")#
-abline(v=obs.coefs[2],col="white",lwd=2)#
-hist(bootstrap.res[,4],main="Intercept",col="black")#
-abline(v=obs.coefs[1],col="white",lwd=2)#
-mean(bootstrap.res[,2], na.rm=T) - obs.coefs[2]
-library(boot)
-?boot
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(cor(d2$write, d2$math))#
-}#
-boot(data, f, R=1000)
-class(data)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(cor(d2$CV, d2$Temp))#
-}#
-boot(data, f, R=1000)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(d2$CV~d2$Temp))#
-}#
-boot(data, f, R=1000)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$CV)~d2$Temp))#
-}#
-boot(data, f, R=1000)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(corr(log(d2$CV)~d2$Temp))#
-}#
-boot(data, f, R=1000)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(cor(log(d2$CV)~d2$Temp))#
-}#
-boot(data, f, R=1000)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(cor(log(d2$CV),d2$Temp))#
-}#
-boot(data, f, R=1000)
-d2 <- d[i,]
-d <- data
-d2 <- d[i,]
-d2
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$CV)~d2$Temp))#
-}#
-boot(data, f, R=1000)
-boot(data, f, R=100)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$CV)~d2$Temp)$coef[2])#
-}#
-boot(data, f, R=1000)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$CV)~d2$Temp)$coef[2])#
-}#
-boot(data, f, R=1000)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$CV)~d2$Temp)$coef[2])#
-}#
-boot(data, f, R=1000)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$CV)~d2$Temp)$coef[2])#
-}#
-boot(data, f, R=1000)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$CV)~d2$Temp)$coef[2])#
-}#
-boot(data, f, R=1000)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$CV)~d2$Temp)$r.squared)#
-}#
-boot(data, f, R=1000)
-vir_boot <- boot(data, f, R=1000)
-plot(vir_boot)
-hist(vir_boot)
-f <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$CV)~d2$Temp)$coef[2])#
-}#
-vir_boot <- boot(data, f, R=1000)#
-#
-plot(vir_boot)
-data <- read.csv("~/Documents/Cycles/Fall_2016/Restructured_final_data_tables/lit_cycles_final_for_analysis.csv", stringsAsFactors = F)
-data <- read.csv("~/Documents/Cycles/Fall_2016/Restructured_final_data_tables/lit_cycles_final_for_analysis.csv", stringsAsFactors = F)
-bootstrap.df	<-	data.frame(Cycle_length_yr=data$Cycle_length_yr,Mass_kg=data$Mass_kg,Temp=data$world_clim_avg_annual)
-bootstrap.df.avg.spec	<-	data %>% filter(Period_estimate_number_for_multiple_periods_per_population_or_series == "" | Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% rowwise() %>% mutate(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_avg_annual)) %>% dplyr::select(avg_period, avg_mass, avg_temp) %>% data.frame(Cycle_length_yr=data$Cycle_length_yr,Mass_kg=data$Mass_kg,Temp=data$Temp)
-bootstrap.df.avg.spec	<-	data %>% filter(Period_estimate_number_for_multiple_periods_per_population_or_series == "" | Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% rowwise() %>% mutate(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_avg_annual)) %>% dplyr::select(avg_period, avg_mass, avg_temp)
-library(dplyr)
-data <- read.csv("~/Documents/Cycles/Fall_2016/Restructured_final_data_tables/lit_cycles_final_for_analysis.csv", stringsAsFactors = F)
-bootstrap.df	<-	data.frame(Cycle_length_yr=data$Cycle_length_yr,Mass_kg=data$Mass_kg,Temp=data$world_clim_avg_annual)
-bootstrap.df.avg.spec	<-	data %>% filter(Period_estimate_number_for_multiple_periods_per_population_or_series == "" | Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% rowwise() %>% mutate(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_avg_annual)) %>% dplyr::select(avg_period, avg_mass, avg_temp)
-head(bootstrap.df.avg.spec)
-rsamp	<-	sample(ntot,ntot)#
-	ith.df	<-	bootstrap.df[rsamp,]#
-	ith.mod	<-	lm(log(Cycle_length_yr)~log(Mass_kg)+Temp,data=ith.df)#
-	ith.mod.sum	<-	summary(ith.mod)#
-	bootstrap.res[i,c(6,2,4)]	<-	coef(ith.mod)
-coef(ith.mod)
-reg_fun <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$Cycle_length_yr) ~ d2$Temp + log(d2$Mass_kg))$coef[2:3])#
-}#
-boot_all <- boot(bootstrap.df, reg_fun, R=1000)
-boot_all
-reg_fun_avg <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$avg_period) ~ d2$avg_temp + log(d2$avg_mass))$coef[2:3])#
-}#
-boot_avg <- boot(bootstrap.df.avg.spec, reg_fun_avg, R=1000)
-boot_avg
-length(bootstrap.df.avg.spec)
-length(bootstrap.df.avg.spec$Cycle_length_yr)
-head(bootstrap.df.avg.spec)
-bootstrap.df.avg.spec	<-	data %>% group_by(Species) %>% rowwise() %>% mutate(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_avg_annual)) %>% dplyr::select(avg_period, avg_mass, avg_temp)
-head(bootstrap.df.avg.spec)
-data %>% filter(Period_estimate_number_for_multiple_periods_per_population_or_series == "" | Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species)
-str(data)
-bootstrap.df.avg.spec	<-	data %>% filter(!is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) & Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% rowwise() %>% mutate(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_avg_annual)) %>% dplyr::select(avg_period, avg_mass, avg_temp)
-head(bootstrap.df.avg.spec)
-data %>% filter(!is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) & Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species)
-data %>% filter(!is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) & Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% rowwise()
-bootstrap.df.avg.spec	<-	data %>% filter(!is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) & Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% rowwise() %>% group_by(Species) %>% mutate(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_avg_annual)) %>% dplyr::select(avg_period, avg_mass, avg_temp)
-bootstrap.df.avg.spec	<-	data %>% filter(!is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) & Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% mutate(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_avg_annual)) %>% dplyr::select(avg_period, avg_mass, avg_temp)
-head(bootstrap.df.avg.spec)
-data %>% filter(!is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) & Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species)
-data %>% filter(!is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) & Period_estimate_number_for_multiple_periods_per_population_or_series == 1)
-bootstrap.df.avg.spec	<-	data %>% filter(is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) & Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% mutate(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_avg_annual)) %>% dplyr::select(avg_period, avg_mass, avg_temp)
-bootstrap.df.avg.spec
-data %>% filter(is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) & Period_estimate_number_for_multiple_periods_per_population_or_series == 1)
-str(data)
-bootstrap.df.avg.spec	<-	data %>% filter(is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) | Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% mutate(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_avg_annual)) %>% dplyr::select(avg_period, avg_mass, avg_temp)
-head(bootstrap.df.avg.spec)
-bootstrap.df.avg.spec
-bootstrap.df.avg.spec	<-	data %>% filter(is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) | Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% summarize(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_avg_annual)) %>% dplyr::select(avg_period, avg_mass, avg_temp)
-head(bootstrap.df.avg.spec)
-bootstrap.df.avg.spec	<-	data %>% filter(is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) | Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% summarize(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_avg_annual)) %>% dplyr::select(Species,avg_period, avg_mass, avg_temp)
-head(bootstrap.df.avg.spec)
-reg_fun_avg <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$avg_period) ~ d2$avg_temp + log(d2$avg_mass))$coef[2:3])#
-}#
-boot_avg <- boot(bootstrap.df.avg.spec, reg_fun_avg, R=1000)
-boot_avg
-#Create data frame which includes only the variables of interest. (cycle length is independent variable, mass and temp are dv's)#
-bootstrap.df	<-	data.frame(Cycle_length_yr=data$Cycle_length_yr,Mass_kg=data$Mass_kg,Temp=data$world_clim_temp)#
-bootstrap.df.avg.spec	<-	data %>% filter(is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) | Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% summarize(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_temp)) %>% dplyr::select(Species,avg_period, avg_mass, avg_temp)
-reg_fun <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$Cycle_length_yr) ~ d2$Temp + log(d2$Mass_kg))$coef[2:3])#
-}#
-boot_all <- boot(bootstrap.df, reg_fun, R=1000)
-boot_all
-bootstrap.df
-boot_all
-reg_fun_avg <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$avg_period) ~ d2$avg_temp + log(d2$avg_mass))$coef[2:3])#
-}#
-boot_avg <- boot(bootstrap.df.avg.spec, reg_fun_avg, R=1000)
-reg_fun <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$Cycle_length_yr) ~ d2$Temp + log(d2$Mass_kg), na.rm=T)$coef[2:3])#
-}#
-boot_all <- boot(bootstrap.df, reg_fun, R=1000)
-boot_all
-bootstrap.df	<-	data.frame(Cycle_length_yr=data$Cycle_length_yr,Mass_kg=data$Mass_kg,Temp=data$world_clim_avg_annual)
-reg_fun <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$Cycle_length_yr) ~ d2$Temp + log(d2$Mass_kg), na.rm=T)$coef[2:3])#
-}#
-boot_all <- boot(bootstrap.df, reg_fun, R=1000)
-boot_all
-reg_fun <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$Cycle_length_yr) ~ d2$Temp + log(d2$Mass_kg))$coef[2:3])#
-}#
-boot_all <- boot(bootstrap.df, reg_fun, R=1000)
-bootstrap.df
-bootstrap.df	<-	data.frame(Cycle_length_yr=data$Cycle_length_yr,Mass_kg=data$Mass_kg,Temp=data$world_clim_temp)
-bootstrap.df
-data <- read.csv("~/Documents/Cycles/Fall_2016/Restructured_final_data_tables/lit_cycles_final_for_analysis.csv", stringsAsFactors = F, na.strings = c("", NA))
-bootstrap.df	<-	data.frame(Cycle_length_yr=data$Cycle_length_yr,Mass_kg=data$Mass_kg,Temp=data$world_clim_temp)
-bootstrap.df
-str(data)
-data <- read.csv("~/Documents/Cycles/Fall_2016/Restructured_final_data_tables/lit_cycles_final_for_analysis.csv", stringsAsFactors = F)
-bootstrap.df	<-	data.frame(Cycle_length_yr=data$Cycle_length_yr,Mass_kg=data$Mass_kg,Temp=data$world_clim_temp)
-reg_fun <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$Cycle_length_yr) ~ d2$Temp + log(d2$Mass_kg))$coef[2:3])#
-}#
-boot_all <- boot(bootstrap.df, reg_fun, R=1000)
-boot_all
-bootstrap.df	<-	data.frame(Cycle_length_yr=data$Cycle_length_yr,Mass_kg=data$Mass_kg,Temp=data$world_clim_avg_annual)
-reg_fun <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$Cycle_length_yr) ~ d2$Temp + log(d2$Mass_kg))$coef[2:3])#
-}#
-boot_all <- boot(bootstrap.df, reg_fun, R=1000)
-boot_all
-reg_fun_avg <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$avg_period) ~ d2$avg_temp + log(d2$avg_mass))$coef[2:3])#
-}#
-boot_avg <- boot(bootstrap.df.avg.spec, reg_fun_avg, R=1000)
-bootstrap.df.avg.spec	<-	data %>% filter(is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) | Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% summarize(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_temp)) %>% dplyr::select(Species,avg_period, avg_mass, avg_temp)
-head(bootstrap.df.avg.spec)
-bootstrap.df.avg.spec	<-	data %>% filter(is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) | Period_estimate_number_for_multiple_periods_per_population_or_series == 1) %>% group_by(Species) %>% summarize(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_temp)) %>% dplyr::select(avg_period, avg_mass, avg_temp)
-head(bootstrap.df.avg.spec)
-reg_fun_avg <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$avg_period) ~ d2$avg_temp + log(d2$avg_mass))$coef[2:3])#
-}#
-boot_avg <- boot(bootstrap.df.avg.spec, reg_fun_avg, R=1000)
-boot_avg
-par(mfrow=c(2,2))
-plot(boot_all)
-plot(boot_avg)
-par(mfrow=c(2,2))
-par(mfrow=c(2,2))
-plot(boot_all)
-plot(boot_avg)
-par(mfrow=c(2,4))#
-plot(boot_all)#
-plot(boot_avg)
-plot(boot_all)
-plot(boot_avg)
-boot_all
-summary(boot_all)
-boot_all$t
-head(boot_all$t)
-ggplot(data=boot_all) %>% geom_hist(aes(t[,1]))
+num_samps <- c()#
+for (data_file in collar_data_files){#
+	num_samps <- c(num_samps, get_num_samps(data_file))#
+}
+num_samps
+num_samps <- sapply(collar_data_files, get_num_samps)
+num_samps
+collar_data_files <- list.files('.', 'collar-data-.*.txt') #.* could be anything
+#use function to do same thing#
+get_num_samps <- function(file_name){#
+	data <- read.csv(data_file)#
+	samples <- nrow(data)#
+	return(samples)#
+}
+num_samps <- sapply(collar_data_files, get_num_samps)
+num_samps
+num_samps <- lapply(collar_data_files, get_num_samps)
+num_samps
+num_samps <- c()#
+for(data_file in collar_data_files){#
+	data <- read.csv(data_file)#
+	samples <- nrow(data)#
+	num_samps <- c(num_samps, samples)#
+}
+num_samps
+num_samps <- sapply(collar_data_files, get_num_samps)
+num_samps
+num_samps <- data.frame(collar_data_files, StringsAsFactors = FALSE) %>% rowwise() %>% summarize(samples = get_num_samps(collar_data_files))
+num_samps
+library(stringr)
+sequence <- "attggc"#
+Gs <- str_count(sequence, "g")#
+Cs <- str_count(sequence, "c")#
+gc_content <- (Gs + Cs) / str_length(sequence) * 100
+dna <- read.csv("~/Documents/dna-sequences-1.txt")
+dna <- read.csv("~/Documents/dna-sequences-1.txt", header=F)
+dna
+sequences <- read.csv("~/Documents/dna-sequences-1.txt", header=F)
+sequence <- "attggc"#
+Gs <- str_count(sequence, "g")#
+Cs <- str_count(sequence, "c")#
+gc_content <- (Gs + Cs) / str_length(sequence) * 100
+sequences <- read.csv("~/Documents/dna-sequences-1.txt", header=F)
+Gs <- str_count(sequence, "g")
+sequences <- read.csv("~/Documents/dna-sequences-1.txt", header=F)
+sequences
+Gs <- str_count(sequence, "g")
+sequence <- "attggc"
+Gs <- str_count(sequence, "g")
+library(rgpddPlusTraits)
+?gpdd_taxon_life_history
+?gpdd_taxon_life_history()
+?gpdd_taxon_life_history()
+setwd("/Users/daan4786/Documents/rgpddPlusTraits")
+document()
+devtools::install_github("klutometis/roxygen")
+document()
+devtools::install_github("klutometis/roxygen", force=T)
+document()
+?gpdd_taxon_life_history()
+library(roxygen2)
+document()
+library(magittr)
+library(magr\ittr)
+library(magrittr)
+document()
+setwd("..")
+install("rgpddPlusTraits")
+devtools::install("rgpddPlusTraits")
+?gpdd_taxon_life_history
+??gpdd_taxon_life_history
+setwd("/Users/daan4786/Documents/rgpddPlusTraits")
+devtools::document()
+?gpdd_taxon_life_history
+data <- gpdd_taxon_life_history()
+head(data)
+data <- gpdd_taxon_life_history(main=T)
+data <- gpdd_taxon_life_history(main=TRUE)
+data <- gpdd_taxon_life_history(main=TRUE)
+data <- gpdd_taxon_life_history(main=TRUE)
+data <- gpdd_taxon_life_history(main=TRUE)
+data <- gpdd_taxon_life_history(TRUE)
+data <- gpdd_taxon_life_history("TRUE")
+data <- gpdd_taxon_life_history(main=TRUE)
+data <- gpdd_taxon_life_history(TRUE)
+data <- gpdd_taxon_life_history()
+head(data)
+data <- gpdd_taxon_life_history(TRUE)
+data <- gpdd_taxon_life_history(TRUE)
+devtools::document()
+data <- gpdd_taxon_life_history(TRUE)
+head(data)
+devtools::document()
+devtools::document()
+data <- gpdd_taxon_life_history(main=TRUE, sources=TRUE)
+head(data)
+data <- gpdd_taxon_life_history(main=FALSE, sources=TRUE)
+head(data)
+devtools::document()
+?gpdd_location_temperature
+data <- gpdd_location_temperature(main=TRUE)
+head(dat)
+head(data)
+devtools::document()
+devtools::document()
+data <- gpdd_location_temperature(location=FALSE, main=TRUE)
+devtools::document()
+data <- gpdd_location_temperature(location=FALSE, main=TRUE)
+devtools::document()
+data <- gpdd_location_temperature(location=FALSE, main=TRUE)
+head(data)
+devtools::document()
+data <- gpdd_location_temperature(location=FALSE, main=TRUE)
+head(data)
+data <- gpdd_location_temperature(location=TRUE, main=TRUE)
+head(data)
+devtools::document()
+data <- gpdd_location_temperature(location=TRUE, main=TRUE)
+head(data)
+data <- gpdd_location_temperature()
+head(data)
+devtools::document()
+data <- gpdd_location_temperature()
+head(data)
+devtools::document()
+data <- gpdd_taxon_life_history()
+devtools::document()
+data <- gpdd_taxon_life_history()
+devtools::document()
+data <- gpdd_taxon_life_history()
+head(data)
+data <- gpdd_taxon_life_history(taxon=TRUE, main=TRUE, sources=TRUE)
+head(data)
+data <- gpdd_taxon_life_history(taxon=FALSE, main=TRUE, sources=TRUE)
+head(data)
+devtools::document()
+data <- gpdd_taxon_life_history(taxon=FALSE, main=TRUE, sources=TRUE)
+head(data)
+devtools::document()
+data <- gpdd_taxon_life_history()
+ggplot(data) + geom_point(aes(x = age_first_reproduction_years, y = DatasetLength))
 library(ggplot2)
-ggplot(data=boot_all) %>% geom_hist(aes(t[,1]))
-hist(boot_all$t[,1])
-par(mfrow=c(2,2))
-hist(boot_all$t[,1], main="Temp exponent all pops")
-hist(boot_all$t[,2], main="Mass exponent all pops")
-summary(boot_all)
-head(boot_all$t0)
-par(mfrow=c(2,2))
-par(mfrow=c(2,2))
-hist(boot_all$t[,1], main="Temp exponent all pops", xlab="Temp exp")
-abline(v=boot_all$t0[1])
-par(mfrow=c(2,2))#
-hist(boot_all$t[,1], main="Temp exponent all pops", xlab="Temp exp")#
-abline(v=boot_all$t0[1])#
-hist(boot_all$t[,2], main="Mass exponent all pops", xlab="Mass exp")#
-abline(v=boot_all$t0[2])#
-hist(boot_avg$t[,1], main="Temp exponent all pops", xlab="Temp exp")#
-abline(v=boot_avg$t0[1])#
-hist(boot_avg$t[,2], main="Mass exponent all pops", xlab="Mass exp")#
-abline(v=boot_avg$t0[2])
-par(mfrow=c(2,2))#
-hist(boot_all$t[,1], main="Temp exponent all pops", xlab="Temp exp", col="black")#
-abline(v=boot_all$t0[1], col="white", lwd=2)#
-hist(boot_all$t[,2], main="Mass exponent all pops", xlab="Mass exp", col="black")#
-abline(v=boot_all$t0[2], col="white", lwd=2)#
-hist(boot_avg$t[,1], main="Temp exponent all pops", xlab="Temp exp", col="black")#
-abline(v=boot_avg$t0[1], col="white", lwd=2)#
-hist(boot_avg$t[,2], main="Mass exponent all pops", xlab="Mass exp", col="black")#
-abline(v=boot_avg$t0[2], col="white", lwd=2)
-bootstrap.df.avg.spec	<-	data %>% filter(is.na(Period_estimate_number_for_multiple_periods_per_population_or_series) | Period_estimate_number_for_multiple_periods_per_population_or_series == 2) %>% group_by(Species) %>% summarize(avg_period = mean(Cycle_length_yr), avg_mass = mean(Mass_kg), avg_temp = mean(world_clim_temp)) %>% dplyr::select(avg_period, avg_mass, avg_temp)#
-head(bootstrap.df.avg.spec)
-reg_fun_avg <- function(d, i){#
-	d2 <- d[i,]#
-	return(lm(log(d2$avg_period) ~ d2$avg_temp + log(d2$avg_mass))$coef[2:3])#
-}#
-boot_avg <- boot(bootstrap.df.avg.spec, reg_fun_avg, R=1000)#
-#
-summary(boot_all)#
-head(boot_all$t0)#
-#
-par(mfrow=c(2,2))#
-hist(boot_all$t[,1], main="Temp exponent all pops", xlab="Temp exp", col="black")#
-abline(v=boot_all$t0[1], col="white", lwd=2)#
-hist(boot_all$t[,2], main="Mass exponent all pops", xlab="Mass exp", col="black")#
-abline(v=boot_all$t0[2], col="white", lwd=2)#
-hist(boot_avg$t[,1], main="Temp exponent all pops", xlab="Temp exp", col="black")#
-abline(v=boot_avg$t0[1], col="white", lwd=2)#
-hist(boot_avg$t[,2], main="Mass exponent all pops", xlab="Mass exp", col="black")#
-abline(v=boot_avg$t0[2], col="white", lwd=2)
-par(mfrow=c(2,2))#
-hist(boot_all$t[,1], main="Temp exponent all pops", xlab="Temp exp", col="black")#
-abline(v=boot_all$t0[1], col="white", lwd=2)#
-hist(boot_all$t[,2], main="Mass exponent all pops", xlab="Mass exp", col="black")#
-abline(v=boot_all$t0[2], col="white", lwd=2)#
-hist(boot_avg$t[,1], main="Temp exponent avg by species", xlab="Temp exp", col="black")#
-abline(v=boot_avg$t0[1], col="white", lwd=2)#
-hist(boot_avg$t[,2], main="Mass exponent avg by species", xlab="Mass exp", col="black")#
-abline(v=boot_avg$t0[2], col="white", lwd=2)
+ggplot(data) + geom_point(aes(x = age_first_reproduction_years, y = DatasetLength))
+ggplot(data) + geom_point(aes(x = age_first_reproduction_years, y = DatasetLength)) + scale_y_log10()
+ggplot(data) + geom_point(aes(x = age_first_reproduction_years, y = DatasetLength)) + scale_y_log10() + scale_y_log10()
+ggplot(data) + geom_point(aes(x = age_first_reproduction_years, y = DatasetLength)) + scale_y_log10() + scale_x_log10()
+ggplot(data) + geom_point(aes(x = age_first_reproduction_years, y = DatasetLength * (1 / SamplingFrequency))) + scale_y_log10() + scale_x_log10()
+ggplot(data) + geom_point(aes(x = age_first_reproduction_years, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + scale_y_log10() + scale_x_log10()
+ggplot(data) + geom_point(aes(x = age_first_reproduction_years, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + geom_smooth(aes(x = age_first_reproduction_years, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + scale_y_log10() + scale_x_log10()
+ggplot(data) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + geom_smooth(aes(x = age_first_reproduction_years, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + scale_y_log10() + scale_x_log10()
+ggplot(data) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + scale_y_log10() + scale_x_log10()
+ggplot(filter(data, TaxonomicClass != "Insecta")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + scale_y_log10() + scale_x_log10()
+data <- gpdd_taxon_life_history(taxon=TRUE)
+ggplot(filter(data, TaxonomicClass != "Insecta")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + scale_y_log10() + scale_x_log10()
+head(data)
+ggplot(filter(data, TaxonomicClass != "Insecta")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass != "Insecta")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass != "Insecta")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))))) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass)) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass), se = F) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency)))), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = age_first_reproduction_years, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass)) + geom_smooth(aes(x = age_first_reproduction_years, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency)))), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = SiblyCarryingCapacity), color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = SiblyCarryingCapacity), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = SiblyCarryingCapacity), color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = SiblyCarryingCapacity)), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = SiblyCarryingCapacity, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = SiblyCarryingCapacity)), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = SiblyCarryingCapacity, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = SiblyCarryingCapacity), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, SiblyCarryingCapacity > 0 (TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes"))) + geom_point(aes(x = Mass_kg, y = SiblyCarryingCapacity, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = SiblyCarryingCapacity), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, SiblyCarryingCapacity > 0 & (TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes"))) + geom_point(aes(x = Mass_kg, y = SiblyCarryingCapacity, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = SiblyCarryingCapacity), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency)))), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10()
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency)))), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10() + xlab("Dataset length (yr)") + ylab("Body mass (kg)")
+ggplot(dplyr::filter(data, TaxonomicClass == "Aves" | TaxonomicClass == "Mammalia" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency))), color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = DatasetLength * (1 / as.numeric(as.character(SamplingFrequency)))), method = "lm", color = "black", se = F) + scale_y_log10() + scale_x_log10() + ylab("Dataset length (yr)") + xlab("Body mass (kg)")
+avg_abundance <- gpdd_data %>% group_by(MainID) %>% summarize(avg_abundance = mean(PopulationUntransformed))
+head(data)
+life_history <- gpdd_taxon_life_history()
+head(life_history)
+avg_abundance_mass <- left_join(avg_abundance, life_history, by = "MainID")
+avg_abundance_mass <- dplyr::left_join(avg_abundance, life_history, by = "MainID")
+avg_abundance <- gpdd_data %>% group_by(MainID) %>% summarize(avg_abundance = mean(PopulationUntransformed))
+library(rgpdd)
+avg_abundance <- gpdd_data %>% group_by(MainID) %>% summarize(avg_abundance = mean(PopulationUntransformed))
+library(dplyr)
+avg_abundance <- gpdd_data %>% group_by(MainID) %>% summarize(avg_abundance = mean(PopulationUntransformed))
+life_history <- gpdd_taxon_life_history()
+avg_abundance_mass <- dplyr::left_join(avg_abundance, life_history, by = "MainID")
+ggplot(avg_abundance_mass) + geom_point(aes(x = Mass_kg, y = avg_abundance))
+ggplot(avg_abundance_mass) + geom_point(aes(x = Mass_kg, y = avg_abundance)) + scale_x_log10() + scale_y_log10()
+life_history <- gpdd_taxon_life_history(taxon=TRUE)
+avg_abundance_mass <- dplyr::left_join(avg_abundance, life_history, by = "MainID")
+ggplot(dplyr::filter(avg_abundance_mass, TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthys")) + geom_point(aes(x = Mass_kg, y = avg_abundance)) + scale_x_log10() + scale_y_log10() + xlab("Average abundance") + ylab("")
+ggplot(dplyr::filter(avg_abundance_mass, TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthys")) + geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + scale_x_log10() + scale_y_log10() + xlab("Average abundance") + ylab("")
+unique(life_history$TaxonomicClass)
+ggplot(dplyr::filter(avg_abundance_mass, TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + scale_x_log10() + scale_y_log10() + ylab("Average abundance") + xlab("Body Mass (kg)")
+ggplot(dplyr::filter(avg_abundance_mass, TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F) + scale_x_log10() + scale_y_log10() + ylab("Average abundance") + xlab("Body Mass (kg)")
+ggplot(dplyr::filter(avg_abundance_mass, TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F, color = "black") + scale_x_log10() + scale_y_log10() + ylab("Average abundance") + xlab("Body Mass (kg)")
+ggplot(dplyr::filter(avg_abundance_mass, TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass), method = "lm", se = F) + scale_x_log10() + scale_y_log10() + ylab("Average abundance") + xlab("Body Mass (kg)")
+ggplot(dplyr::filter(avg_abundance_mass, TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes")) + geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F, color = "black") + scale_x_log10() + scale_y_log10() + ylab("Average abundance") + xlab("Body Mass (kg)")
+ggplot(dplyr::filter(avg_abundance_mass, DatasetLength > 20, (TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes"))) + geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F, color = "black") + scale_x_log10() + scale_y_log10() + ylab("Average abundance") + xlab("Body Mass (kg)")
+ggplot(dplyr::filter(avg_abundance_mass, DatasetLength > 30, (TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes"))) + geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F, color = "black") + scale_x_log10() + scale_y_log10() + ylab("Average abundance") + xlab("Body Mass (kg)")
+ggplot(dplyr::filter(avg_abundance_mass, DatasetLength > 40, (TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes"))) + geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F, color = "black") + scale_x_log10() + scale_y_log10() + ylab("Average abundance") + xlab("Body Mass (kg)")
+ggplot(dplyr::filter(avg_abundance_mass, DatasetLength > 20, (TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes"))) + geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F, color = "black") + scale_x_log10() + scale_y_log10() + ylab("Average abundance") + xlab("Body Mass (kg)")
+ggplot(dplyr::filter(avg_abundance_mass, DatasetLength > 20, (TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes"))) + geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F, color = "black") + scale_x_log10() + scale_y_log10() + ylab("Average abundance (variable spatial units)") + xlab("Body Mass (kg)")
+life_history <- gpdd_taxon_life_history(taxon=TRUE, main=TRUE, sources=FALSE)
+head(life_history)
 library(broom)#
 library(dplyr)#
 library(ggplot2)#
 library(gridExtra)#
 library(relaimpo)
 lit_cycles <- read.csv("~/Documents/Cycles/Fall_2016/Restructured_final_data_tables/lit_cycles_final_for_analysis.csv", header = T, stringsAsFactors = F)
+lit_cycles$Method[lit_cycles$Method == "Wave"] <- "Other"#
+lit_cycles$Method[lit_cycles$Method == "Cos"] <- "Other"#
+lit_cycles$Method[lit_cycles$Method == "TPT"] <- "Other"#
+lit_cycles$Method[lit_cycles$Method == ""] <- "Other"
 expons_1 <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 1) %>% do(tidy(summary(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .))))#
 #
 mass_plot_1 <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 1) %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_1[3, 2] * Temp)) %>% ggplot() + geom_point(aes(x = log(Mass_kg), y = log(tempcorr), color = Class, shape = Field_Lab), size = 3) + geom_smooth(aes(x = log(Mass_kg), y = log(tempcorr)), method = "lm", se = F, color = "black") + ylab("log Temperature corrected period (yr/exp(T))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none") #
 #
-temp_plot_1 <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 1) %>% mutate(masscorr = Cycle_length_yr * (Mass_kg ^ -expons_1[2, 2])) %>% ggplot() + geom_point(aes(x = Temp, y = log(masscorr), color = Class, shape = Field_Lab), size = 3) + geom_smooth(aes(x = Temp, y = log(masscorr)), method = "lm", se = F, color = "black") + ylab("log Mass corrected period (yr/kg^0.26)") + xlab("Temperature (C)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"),text = element_text(size = 15), legend.position = "bottom") + guides(color = guide_legend(title = "Group:"), shape = guide_legend(title = "Location:"))#
+temp_plot_1 <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 1) %>% mutate(masscorr = Cycle_length_yr * (Mass_kg ^ -expons_1[2, 2])) %>% ggplot() + geom_point(aes(x = Temp, y = log(masscorr), color = Class, shape = Field_Lab), size = 3) + geom_smooth(aes(x = Temp, y = log(masscorr)), method = "lm", se = F, color = "black") + ylab("log Mass corrected period (yr/kg^0.26)") + xlab("Temperature (C)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"),text = element_text(size = 15), legend.position = "none") + guides(color = guide_legend(title = "Group:"), shape = guide_legend(title = "Location:"))#
 grid.arrange(mass_plot_1, temp_plot_1, nrow = 1)
+expons_1
 short_long <- function(len_per_gen, threshold_1){#
 	if(len_per_gen < threshold_1){#
 		length <- "short"#
@@ -373,153 +295,181 @@ short_df <- Length_classed %>% filter(length == "short") %>% mutate(tempcorr = C
 long_df <- Length_classed %>% filter(length == "long") %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_length[3, 3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -expons_length[2, 3]))#
 very_long_df <- Length_classed %>% filter(length == "very long") %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_length[9, 3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -expons_length[8, 3]))#
 #
-+ geom_point(data = very_long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), size = 3) + geom_smooth(data = very_long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), method = "lm", se = F) #
- + geom_point(data = very_long_df, aes(x = Temp, y = log(masscorr), color = "c"), size = 3) + geom_smooth(data = very_long_df, aes(x = Temp, y = log(masscorr), color = "c"), method = "lm", se = F) #
-mass_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), method = "lm", se = F) + scale_color_manual(values = c("a" = "blue", "b" = "red"), labels = c("< 6", "6 +")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none")#
+mass_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), method = "lm", se = F) + geom_point(data = very_long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), size = 3) + geom_smooth(data = very_long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), method = "lm", se = F) + scale_color_manual(values = c("a" = "blue", "b" = "red", "c" = "burlywood"), labels = c("< 6", "6 - 17", "> 17")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none")#
 #
-temp_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), method = "lm", se = F)+ scale_color_manual(values = c("a" = "blue", "b" = "red"), labels = c("< 6", "6+")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom") + guides(color = guide_legend(title = "Number of generations in a cycle:"))#
+temp_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), method = "lm", se = F) + geom_point(data = very_long_df, aes(x = Temp, y = log(masscorr), color = "c"), size = 3) + geom_smooth(data = very_long_df, aes(x = Temp, y = log(masscorr), color = "c"), method = "lm", se = F) + scale_color_manual(values = c("a" = "blue", "b" = "red", "c" = "burlywood"), labels = c("< 6", "6 - 17", "> 17")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom") + guides(color = guide_legend(title = "Number of generations in a cycle:"))#
 grid.arrange(mass_length, temp_length, nrow = 1)
 expons_length
-lit_cycles <- read.csv("~/Documents/Cycles/Fall_2016/Restructured_final_data_tables/lit_cycles_final_for_analysis.csv", header = T, stringsAsFactors = F)
+mass_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), method = "lm", se = F) + scale_color_manual(values = c("a" = "blue", "b" = "red"), labels = c("< 6", "6 +")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none")#
+#
+temp_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), method = "lm", se = F) + scale_color_manual(values = c("a" = "blue", "b" = "red"), labels = c("< 6", "6 +")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom") + guides(color = guide_legend(title = "Number of generations in a cycle:"))#
+grid.arrange(mass_length, temp_length, nrow = 1)
+scaling_exponents <- data.frame(threshold = numeric(100), longmassexp = numeric(100), longmassexp_se = numeric(100), longtempexp = numeric(100), longtempexp_se = numeric(100), shortmassexp = numeric(100), shorttempexp = numeric(100))#
+head(scaling_exponents)#
+#
+for(i in 1:100){#
+Length_classed <- lit_cycles %>% filter(!is.na(Cycle_length_yr) & !is.na(age_first_reproduction_years)) %>% rowwise() %>% mutate(length = short_long((Cycle_length_yr / age_first_reproduction_years), i))#
+#
+expons_length <- Length_classed %>% group_by(length) %>% do(tidy(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .))) %>% data.frame()#
+long_expons <- subset(expons_length, length == "long")#
+short_expons <- subset(expons_length, length == "short")#
+#
+scaling_exponents$threshold[i] <- i#
+scaling_exponents$longmassexp[i] <- long_expons[2, 3]#
+scaling_exponents$longtempexp[i] <- long_expons[3, 3]#
+scaling_exponents$longmassexp_se[i] <- long_expons[2, 4]#
+scaling_exponents$longtempexp_se[i] <- long_expons[3, 4]#
+scaling_exponents$shortmassexp[i] <- short_expons[2, 3]#
+scaling_exponents$shorttempexp[i] <- short_expons[3, 3]#
+#
+}#
+#
+long_mass_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = longmassexp)) + geom_point(aes(x = threshold, y = longmassexp + longmassexp_se), shape = 95) + geom_point(aes(x = threshold, y = longmassexp - longmassexp_se), shape = 95) + geom_hline(yintercept = 0.25) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+long_temp_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = longtempexp)) + geom_point(aes(x = threshold, y = longtempexp + longtempexp_se), shape = 95) + geom_point(aes(x = threshold, y = longtempexp - longtempexp_se), shape = 95) + geom_hline(yintercept = -0.1) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+grid.arrange(long_mass_expons_plot, long_temp_expons_plot, nrow = 1)
+short_mass_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shortmassexp)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+short_temp_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shorttempexp)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+grid.arrange(short_mass_expons_plot, short_temp_expons_plot, nrow = 1)
+scaling_exponents <- data.frame(threshold = numeric(100), longmassexp = numeric(100), longmassexp_se = numeric(100), longtempexp = numeric(100), longtempexp_se = numeric(100), shortmassexp = numeric(100), shorttempexp = numeric(100))#
+head(scaling_exponents)#
+#
+for(i in 1:100){#
+Length_classed <- lit_cycles %>% filter(!is.na(Cycle_length_yr) & !is.na(age_first_reproduction_years)) %>% rowwise() %>% mutate(length = short_long((Cycle_length_yr / age_first_reproduction_years), i))#
+#
+expons_length <- Length_classed %>% group_by(length) %>% do(tidy(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .))) %>% data.frame()#
+long_expons <- subset(expons_length, length == "long")#
+short_expons <- subset(expons_length, length == "short")#
+#
+scaling_exponents$threshold[i] <- i#
+scaling_exponents$longmassexp[i] <- long_expons[2, 3]#
+scaling_exponents$longtempexp[i] <- long_expons[3, 3]#
+scaling_exponents$longmassexp_se[i] <- long_expons[2, 4]#
+scaling_exponents$longtempexp_se[i] <- long_expons[3, 4]#
+scaling_exponents$shortmassexp[i] <- short_expons[2, 3]#
+scaling_exponents$shorttempexp[i] <- short_expons[3, 3]#
+#
+}#
+#
+long_mass_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = longmassexp)) + geom_point(aes(x = threshold, y = longmassexp + longmassexp_se), shape = 95) + geom_point(aes(x = threshold, y = longmassexp - longmassexp_se), shape = 95) + geom_hline(yintercept = 0.25) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+#
+long_temp_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = longtempexp)) + geom_point(aes(x = threshold, y = longtempexp + longtempexp_se), shape = 95) + geom_point(aes(x = threshold, y = longtempexp - longtempexp_se), shape = 95) + geom_hline(yintercept = -0.1) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+grid.arrange(long_mass_expons_plot, long_temp_expons_plot, nrow = 1)#
+short_mass_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shortmassexp)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+short_temp_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shorttempexp)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+grid.arrange(short_mass_expons_plot, short_temp_expons_plot, nrow = 1)
+short_mass_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shortmassexp)) + geom_point(aes(x = threshold, y = shortmassexp + shortmassexp_se), shape = 95) + geom_point(aes(x = threshold, y = shortmassexp - shortmassexp_se), shape = 95) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+short_temp_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shorttempexp)) + geom_point(aes(x = threshold, y = shorttempexp + shorttempexp_se)) + geom_point(aes(x = threshold, y = shorttempexp - shorttempexp_se)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+grid.arrange(short_mass_expons_plot, short_temp_expons_plot, nrow = 1)
+head(scaling_exponents)
+scaling_exponents <- data.frame(threshold = numeric(100), longmassexp = numeric(100), longmassexp_se = numeric(100), longtempexp = numeric(100), longtempexp_se = numeric(100), shortmassexp = numeric(100), shorttempexp = numeric(100), shortmassexp_se = numeric(100), shorttempexp_se = numeric(100))#
+head(scaling_exponents)#
+#
+for(i in 1:100){#
+Length_classed <- lit_cycles %>% filter(!is.na(Cycle_length_yr) & !is.na(age_first_reproduction_years)) %>% rowwise() %>% mutate(length = short_long((Cycle_length_yr / age_first_reproduction_years), i))#
+#
+expons_length <- Length_classed %>% group_by(length) %>% do(tidy(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .))) %>% data.frame()#
+long_expons <- subset(expons_length, length == "long")#
+short_expons <- subset(expons_length, length == "short")#
+#
+scaling_exponents$threshold[i] <- i#
+scaling_exponents$longmassexp[i] <- long_expons[2, 3]#
+scaling_exponents$longtempexp[i] <- long_expons[3, 3]#
+scaling_exponents$longmassexp_se[i] <- long_expons[2, 4]#
+scaling_exponents$longtempexp_se[i] <- long_expons[3, 4]#
+scaling_exponents$shortmassexp[i] <- short_expons[2, 3]#
+scaling_exponents$shorttempexp[i] <- short_expons[3, 3]#
+scaling_exponents$shortmassexp_se[i] <- short_expons[2, 4]#
+scaling_exponents$shorttempexp_se[i] <- short_expons[3, 4]#
+}#
+#
+long_mass_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = longmassexp)) + geom_point(aes(x = threshold, y = longmassexp + longmassexp_se), shape = 95) + geom_point(aes(x = threshold, y = longmassexp - longmassexp_se), shape = 95) + geom_hline(yintercept = 0.25) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+long_temp_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = longtempexp)) + geom_point(aes(x = threshold, y = longtempexp + longtempexp_se), shape = 95) + geom_point(aes(x = threshold, y = longtempexp - longtempexp_se), shape = 95) + geom_hline(yintercept = -0.1) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+grid.arrange(long_mass_expons_plot, long_temp_expons_plot, nrow = 1)#
+#
+head(scaling_exponents)#
+short_mass_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shortmassexp)) + geom_point(aes(x = threshold, y = shortmassexp + shortmassexp_se), shape = 95) + geom_point(aes(x = threshold, y = shortmassexp - shortmassexp_se), shape = 95) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+short_temp_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shorttempexp)) + geom_point(aes(x = threshold, y = shorttempexp + shorttempexp_se)) + geom_point(aes(x = threshold, y = shorttempexp - shorttempexp_se)) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+grid.arrange(short_mass_expons_plot, short_temp_expons_plot, nrow = 1)
+short_mass_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shortmassexp)) + geom_point(aes(x = threshold, y = shortmassexp + shortmassexp_se), shape = 95) + geom_point(aes(x = threshold, y = shortmassexp - shortmassexp_se), shape = 95) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+short_temp_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shorttempexp)) + geom_point(aes(x = threshold, y = shorttempexp + shorttempexp_se), shape = 95) + geom_point(aes(x = threshold, y = shorttempexp - shorttempexp_se), shape = 95) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+grid.arrange(short_mass_expons_plot, short_temp_expons_plot, nrow = 1)#
+#
+grid.arrange(long_mass_expons_plot, long_temp_expons_plot, short_mass_expons_plot, short_temp_expons_plot, nrow=2)
+long_mass_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = longmassexp)) + geom_point(aes(x = threshold, y = longmassexp + longmassexp_se), shape = 95) + geom_point(aes(x = threshold, y = longmassexp - longmassexp_se), shape = 95) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+long_temp_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = longtempexp)) + geom_point(aes(x = threshold, y = longtempexp + longtempexp_se), shape = 95) + geom_point(aes(x = threshold, y = longtempexp - longtempexp_se), shape = 95)  + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+grid.arrange(long_mass_expons_plot, long_temp_expons_plot, nrow = 1)#
+#
+head(scaling_exponents)#
+short_mass_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shortmassexp)) + geom_point(aes(x = threshold, y = shortmassexp + shortmassexp_se), shape = 95) + geom_point(aes(x = threshold, y = shortmassexp - shortmassexp_se), shape = 95) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+short_temp_expons_plot <- scaling_exponents %>% ggplot() + geom_point(aes(x = threshold, y = shorttempexp)) + geom_point(aes(x = threshold, y = shorttempexp + shorttempexp_se), shape = 95) + geom_point(aes(x = threshold, y = shorttempexp - shorttempexp_se), shape = 95) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom")#
+grid.arrange(short_mass_expons_plot, short_temp_expons_plot, nrow = 1)#
+#
+grid.arrange(long_mass_expons_plot, long_temp_expons_plot, short_mass_expons_plot, short_temp_expons_plot, nrow=2)
+method_groups <- lit_cycles %>% group_by(Method) #
+expon_method <- method_groups %>% do(tidy(summary(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .))$r.squared)) %>% data.frame()
+expon_method
+expon_method <- method_groups %>% do(tidy(summary(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .)))) %>% data.frame()
+expon_method
+auto_lit_df <- lit_cycles %>% filter(Method == "Auto") %>% mutate(temp_corr = exp(-expon_method[3, 3] * Temp) * Cycle_length_yr, mass_corr = exp(-expon_method[2, 3] * Temp) * Cycle_length_yr)#
+spect_lit_df <- lit_cycles %>% filter(Method == "Spect") %>% mutate(temp_corr = exp(-expon_method[9, 3] * Temp) * Cycle_length_yr, mass_corr = exp(-expon_method[8, 3] * Temp) * Cycle_length_yr)#
+eyeball_lit_df <- lit_cycles %>% filter(Method == "Subj") %>% mutate(temp_corr = exp(-expon_method[12, 3] * Temp) * Cycle_length_yr, mass_corr = exp(-expon_method[11, 3] * Temp) * Cycle_length_yr)#
+other_lit_df <- lit_cycles %>% filter(Method == "Other") %>% mutate(temp_corr = exp(-expon_method[6, 3] * Temp) * Cycle_length_yr, mass_corr = exp(-expon_method[5, 3] * Temp) * Cycle_length_yr)#
+#
+method_mass <- ggplot() + geom_point(data = auto_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "a"), size = 3) + geom_smooth(data = auto_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "a"), method = "lm", se = F) + geom_point(data = spect_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "b"), size = 3) + geom_smooth(data = spect_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "b"), method = "lm", se = F) + geom_point(data = eyeball_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "c"), size = 3) + geom_smooth(data = eyeball_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "c"), method = "lm", se = F) + geom_point(data = other_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "d"), size = 3) + geom_smooth(data = other_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "d"), se = F, method = "lm") + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + scale_color_manual(name = "", values = c("a" = "navy", "b" = "firebrick", "c" = "darkcyan", "d" = "Khaki2"), labels = c("Auto", "Spectral", "Eyeball", "Other")) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none")#
+#
+method_temp <- ggplot() + geom_point(data = auto_lit_df, aes(x = Temp, y = log(mass_corr), color = "a"), size = 3) + geom_smooth(data = auto_lit_df, aes(x = Temp, y = log(mass_corr), color = "a"), method = "lm", se = F) + geom_point(data = spect_lit_df, aes(x = Temp, y = log(mass_corr), color = "b"), size = 3) + geom_smooth(data = spect_lit_df, aes(x = Temp, y = log(mass_corr), color = "b"), method = "lm", se = F) + geom_point(data = eyeball_lit_df, aes(x = Temp, y = log(mass_corr), color = "c"), size = 3) + geom_smooth(data = eyeball_lit_df, aes(x = Temp, y = log(mass_corr), color = "c"), method = "lm", se = F) + geom_point(data = other_lit_df, aes(x = Temp, y = log(mass_corr), color = "d"), size = 3) + geom_smooth(data = other_lit_df, aes(x = Temp, y = log(mass_corr), color = "d"), se = F, method = "lm") + ylab("log Mass corrected period (yr/M^~0.25)") + xlab("Temperature (C)") + scale_color_manual(name = "",  values = c("a" = "Navy", "b" = "firebrick", "c" = "darkcyan", "d" = "Khaki2"), labels = c("Auto", "Spectral", "Eyeball", "Other")) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom") + guides(color = guide_legend(title = "Method:"))#
+grid.arrange(method_mass, method_temp, nrow = 1)
+expon_method <- method_groups %>% filter(Cycle_length_yr / age_first_reproduction_yr > 4) %>% do(tidy(summary(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .)))) %>% data.frame()
+expon_method <- method_groups %>% filter(Cycle_length_yr / age_first_reproduction_year > 4) %>% do(tidy(summary(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .)))) %>% data.frame()
+expon_method <- method_groups %>% filter(Cycle_length_yr / age_first_reproduction_years > 4) %>% do(tidy(summary(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .)))) %>% data.frame()
+expon_method
+auto_lit_df <- lit_cycles %>% filter(Method == "Auto") %>% mutate(temp_corr = exp(-expon_method[3, 3] * Temp) * Cycle_length_yr, mass_corr = exp(-expon_method[2, 3] * Temp) * Cycle_length_yr)#
+spect_lit_df <- lit_cycles %>% filter(Method == "Spect") %>% mutate(temp_corr = exp(-expon_method[9, 3] * Temp) * Cycle_length_yr, mass_corr = exp(-expon_method[8, 3] * Temp) * Cycle_length_yr)#
+eyeball_lit_df <- lit_cycles %>% filter(Method == "Subj") %>% mutate(temp_corr = exp(-expon_method[12, 3] * Temp) * Cycle_length_yr, mass_corr = exp(-expon_method[11, 3] * Temp) * Cycle_length_yr)#
+other_lit_df <- lit_cycles %>% filter(Method == "Other") %>% mutate(temp_corr = exp(-expon_method[6, 3] * Temp) * Cycle_length_yr, mass_corr = exp(-expon_method[5, 3] * Temp) * Cycle_length_yr)#
+#
+method_mass <- ggplot() + geom_point(data = auto_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "a"), size = 3) + geom_smooth(data = auto_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "a"), method = "lm", se = F) + geom_point(data = spect_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "b"), size = 3) + geom_smooth(data = spect_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "b"), method = "lm", se = F) + geom_point(data = eyeball_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "c"), size = 3) + geom_smooth(data = eyeball_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "c"), method = "lm", se = F) + geom_point(data = other_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "d"), size = 3) + geom_smooth(data = other_lit_df, aes(x = log(Mass_kg), y = log(temp_corr), color = "d"), se = F, method = "lm") + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + scale_color_manual(name = "", values = c("a" = "navy", "b" = "firebrick", "c" = "darkcyan", "d" = "Khaki2"), labels = c("Auto", "Spectral", "Eyeball", "Other")) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none")#
+#
+method_temp <- ggplot() + geom_point(data = auto_lit_df, aes(x = Temp, y = log(mass_corr), color = "a"), size = 3) + geom_smooth(data = auto_lit_df, aes(x = Temp, y = log(mass_corr), color = "a"), method = "lm", se = F) + geom_point(data = spect_lit_df, aes(x = Temp, y = log(mass_corr), color = "b"), size = 3) + geom_smooth(data = spect_lit_df, aes(x = Temp, y = log(mass_corr), color = "b"), method = "lm", se = F) + geom_point(data = eyeball_lit_df, aes(x = Temp, y = log(mass_corr), color = "c"), size = 3) + geom_smooth(data = eyeball_lit_df, aes(x = Temp, y = log(mass_corr), color = "c"), method = "lm", se = F) + geom_point(data = other_lit_df, aes(x = Temp, y = log(mass_corr), color = "d"), size = 3) + geom_smooth(data = other_lit_df, aes(x = Temp, y = log(mass_corr), color = "d"), se = F, method = "lm") + ylab("log Mass corrected period (yr/M^~0.25)") + xlab("Temperature (C)") + scale_color_manual(name = "",  values = c("a" = "Navy", "b" = "firebrick", "c" = "darkcyan", "d" = "Khaki2"), labels = c("Auto", "Spectral", "Eyeball", "Other")) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom") + guides(color = guide_legend(title = "Method:"))#
+grid.arrange(method_mass, method_temp, nrow = 1)
+grid.arrange(mass_length, temp_length, nrow = 1)
 expons_1 <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 1) %>% do(tidy(summary(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .))))#
 #
 mass_plot_1 <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 1) %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_1[3, 2] * Temp)) %>% ggplot() + geom_point(aes(x = log(Mass_kg), y = log(tempcorr), color = Class, shape = Field_Lab), size = 3) + geom_smooth(aes(x = log(Mass_kg), y = log(tempcorr)), method = "lm", se = F, color = "black") + ylab("log Temperature corrected period (yr/exp(T))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none") #
 #
-temp_plot_1 <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 1) %>% mutate(masscorr = Cycle_length_yr * (Mass_kg ^ -expons_1[2, 2])) %>% ggplot() + geom_point(aes(x = Temp, y = log(masscorr), color = Class, shape = Field_Lab), size = 3) + geom_smooth(aes(x = Temp, y = log(masscorr)), method = "lm", se = F, color = "black") + ylab("log Mass corrected period (yr/kg^0.26)") + xlab("Temperature (C)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"),text = element_text(size = 15), legend.position = "bottom") + guides(color = guide_legend(title = "Group:"), shape = guide_legend(title = "Location:"))#
+temp_plot_1 <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 1) %>% mutate(masscorr = Cycle_length_yr * (Mass_kg ^ -expons_1[2, 2])) %>% ggplot() + geom_point(aes(x = Temp, y = log(masscorr), color = Class, shape = Field_Lab), size = 3) + geom_smooth(aes(x = Temp, y = log(masscorr)), method = "lm", se = F, color = "black") + ylab("log Mass corrected period (yr/kg^0.26)") + xlab("Temperature (C)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"),text = element_text(size = 15), legend.position = "none") + guides(color = guide_legend(title = "Group:"), shape = guide_legend(title = "Location:"))#
 grid.arrange(mass_plot_1, temp_plot_1, nrow = 1)
-Length_classed <- lit_cycles %>% filter(!is.na(Cycle_length_yr) & !is.na(age_first_reproduction_years)) %>% rowwise() %>% mutate(length = short_long(Cycle_length_yr / age_first_reproduction_years, 6))#
-str(Length_classed)#
-expons_length <- Length_classed %>% group_by(length) %>% do(tidy(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .))) %>% data.frame()#
+lit_cycles$Class[lit_cycles$Class == "Arachnida"] <- "Insecta"#
+unique(lit_cycles$Class)#
 #
-short_df <- Length_classed %>% filter(length == "short") %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_length[6, 3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -expons_length[5, 3]))#
-long_df <- Length_classed %>% filter(length == "long") %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_length[3, 3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -expons_length[2, 3]))#
-very_long_df <- Length_classed %>% filter(length == "very long") %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_length[9, 3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -expons_length[8, 3]))#
+within_groups_expons_6 <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 6 & Class != "Aves" & Class != "Mammalia") %>% group_by(Class) %>% do(tidy(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .))) %>% data.frame()#
+within_groups_expons_6_mb <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 6 & (Class == "Aves" | Class == "Mammalia")) %>% group_by(Class) %>% do(tidy(lm(log(Cycle_length_yr) ~ log(Mass_kg), data = .))) %>% data.frame()#
 #
-+ geom_point(data = very_long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), size = 3) + geom_smooth(data = very_long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), method = "lm", se = F) #
- + geom_point(data = very_long_df, aes(x = Temp, y = log(masscorr), color = "c"), size = 3) + geom_smooth(data = very_long_df, aes(x = Temp, y = log(masscorr), color = "c"), method = "lm", se = F) #
-mass_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), method = "lm", se = F) + scale_color_manual(values = c("a" = "blue", "b" = "red"), labels = c("< 6", "6 +")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none")#
+aves_corr_df <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 6 & Class == "Aves") %>% mutate(tempcorr = Cycle_length_yr * exp(-within_groups_expons_6_mb[2,3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -within_groups_expons_6_mb[4,3])) %>% dplyr::select(Class,Mass_kg, Temp, tempcorr, masscorr, Cycle_length_yr)#
 #
-temp_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), method = "lm", se = F)+ scale_color_manual(values = c("a" = "blue", "b" = "red"), labels = c("< 6", "6+")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom") + guides(color = guide_legend(title = "Number of generations in a cycle:"))#
-grid.arrange(mass_length, temp_length, nrow = 1)
-expons_length
--0.02+0.006
-Length_classed <- lit_cycles %>% filter(!is.na(Cycle_length_yr) & !is.na(age_first_reproduction_years)) %>% rowwise() %>% mutate(length = short_long(Cycle_length_yr / age_first_reproduction_years, 6))#
-str(Length_classed)#
-nnexpons_length <- Length_classed %>% group_by(length) %>% do(tidy(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .))) %>% data.frame()#
+fish_corr_df <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 6 & Class == "Fish") %>% mutate(tempcorr = Cycle_length_yr * exp(-within_groups_expons_6[5,3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -within_groups_expons_6[4,3])) %>% dplyr::select(Class,Mass_kg, Temp, tempcorr, masscorr)#
 #
-short_df <- Length_classed %>% filter(length == "short") %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_length[6, 3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -expons_length[5, 3]))#
-long_df <- Length_classed %>% filter(length == "long") %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_length[3, 3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -expons_length[2, 3]))#
-very_long_df <- Length_classed %>% filter(length == "very long") %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_length[9, 3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -expons_length[8, 3]))#
+ins_corr_df <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 6 & Class == "Insecta") %>% mutate(tempcorr = Cycle_length_yr * exp(-within_groups_expons_6[8,3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -within_groups_expons_6[7,3])) %>% dplyr::select(Class,Mass_kg, Temp, tempcorr, masscorr)#
 #
-+ geom_point(data = very_long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), size = 3) + geom_smooth(data = very_long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), method = "lm", se = F) #
- + geom_point(data = very_long_df, aes(x = Temp, y = log(masscorr), color = "c"), size = 3) + geom_smooth(data = very_long_df, aes(x = Temp, y = log(masscorr), color = "c"), method = "lm", se = F) #
-mass_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), method = "lm", se = F) + scale_color_manual(values = c("a" = "blue", "b" = "red"), labels = c("< 6", "6 +")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none")#
+mam_corr_df <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 6 & Class == "Mammalia") %>% mutate(tempcorr = Cycle_length_yr * exp(-within_groups_expons_6_mb[14,3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -within_groups_expons_6_mb[4,3])) %>% dplyr::select(Class,Mass_kg, Temp, tempcorr, masscorr, Cycle_length_yr)#
 #
-temp_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), method = "lm", se = F)+ scale_color_manual(values = c("a" = "blue", "b" = "red"), labels = c("< 6", "6+")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom") + guides(color = guide_legend(title = "Number of generations in a cycle:"))#
-grid.arrange(mass_length, temp_length, nrow = 1)
-expons_length <- Length_classed %>% group_by(length) %>% do(tidy(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .))) %>% data.frame()
-expons_length
-short_df <- Length_classed %>% filter(length == "short") %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_length[6, 3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -expons_length[5, 3]))#
-long_df <- Length_classed %>% filter(length == "long") %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_length[3, 3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -expons_length[2, 3]))#
-very_long_df <- Length_classed %>% filter(length == "very long") %>% mutate(tempcorr = Cycle_length_yr * exp(-expons_length[9, 3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -expons_length[8, 3]))#
+uni_corr_df <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 6 & Class == "Protist") %>% mutate(tempcorr = Cycle_length_yr * exp(-within_groups_expons_6[12,3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -within_groups_expons_6[11,3])) %>% dplyr::select(Class,Mass_kg, Temp, tempcorr, masscorr)#
 #
-+ geom_point(data = very_long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), size = 3) + geom_smooth(data = very_long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), method = "lm", se = F) #
- + geom_point(data = very_long_df, aes(x = Temp, y = log(masscorr), color = "c"), size = 3) + geom_smooth(data = very_long_df, aes(x = Temp, y = log(masscorr), color = "c"), method = "lm", se = F) #
-mass_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), method = "lm", se = F) + scale_color_manual(values = c("a" = "blue", "b" = "red"), labels = c("< 6", "6 +")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none")#
+zoo_corr_df <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 6 & Class == "Zooplankton") %>% mutate(tempcorr = Cycle_length_yr * exp(-within_groups_expons_6[15,3] * Temp), masscorr = Cycle_length_yr * (Mass_kg ^ -within_groups_expons_6[14,3])) %>% dplyr::select(Class,Mass_kg, Temp, tempcorr, masscorr)#
 #
-temp_length <- Length_classed %>% ggplot() + geom_point(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), size = 3) + geom_smooth(data = short_df, aes(x = Temp, y = log(masscorr), color = "a"), method = "lm", se = F) + geom_point(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), size = 3) + geom_smooth(data = long_df, aes(x = Temp, y = log(masscorr), color = "b"), method = "lm", se = F)+ scale_color_manual(values = c("a" = "blue", "b" = "red"), labels = c("< 6", "6+")) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom") + guides(color = guide_legend(title = "Number of generations in a cycle:"))#
-grid.arrange(mass_length, temp_length, nrow = 1)
-library(devtools)
-devtools::install_github("klutometis/roxygen")
-getwd()
-setwd("/Users/daan4786/Documents")
-create("Traits_temperature")
-create("traits_temperature")
-create("rgpddPlusTraits")
-library(rgpdd)
-devtools::use_data_raw()
-?use_data_raw()
-setwd("/Users/daan4786/Documents/rgpddPlusTraits")
-devtools::use_data_raw()
-life_history <- read.csv("~/Documents/rgpddPlusTraits/data-raw/GPDD_taxon_traits.csv", stringsAsFactors=F)
-devtools::use_data(life_history)
-temperature <- read.csv("~/Documents/rgpddPlusTraits/data-raw/Avg_wc_temp_for_GPDD_pops.csv", stringsAsFactors=F)
-devtools::use_data(temperature)
-install("rgpddPlusTraits")
-setwd("..")
-install("rgpddPlusTraits")
-install("rgpddPlusTraits")
-install("rgpddPlusTraits")
-install("rgpddPlusTraits")
-install("rgpddPlusTraits")
-install("rgpddPlusTraits")
-install("rgpddPlusTraits")
-setwd("/Users/daan4786/Documents/rgpddPlusTraits")
-devtools::use_data(gpdd_main)
-devtools::use_data(gpdd_location)
-devtools::use_data(gpdd_data)
-devtools::use_data(gpdd_datasource)
-devtools::use_data(gpdd_taxon)
-head(gpdd_biotope)
-devtools::use_data(gpdd_biotope)
-devtools::use_data(gpdd_timeperiod)
-devtools::use_data(gpdd_version)
-devtools::use_data(gpdd_restricted)
-?inner_join
-head(life_history)
-gpdd_location_life_history <- left_join(gpdd_taxon, life_history, by = "TaxonID")
-head(gpdd_location_life_history)
-?select_vars
-gpdd_location_life_history %>% dplyr::select(-TaxonName.y)
-gpdd_location_life_history <- gpdd_location_life_history %>% dplyr::select(-TaxonName.y)
-head(gpdd_location_life_history)
-gpdd_location_life_history <- gpdd_location_life_history %>% dplyr::select(-X,-Class,-CommonName.y)
-head(gpdd_location_life_history)
-colnames(gpdd_location_life_history)[2] <- "TaxonName"
-head(gpdd_location_life_history)
-colnames(gpdd_location_life_history)[6] <- "CommonName"
-head(gpdd_location_life_history)
-devtools::use_data(gpdd_location_life_history)
-gpdd_location_temperature <- left_join(gpdd_location, temperature, by = "LocationID")
-head(gpdd_location_temperature)
-gpdd_location_temperature <- gpdd_location_temperature %>% dplyr::select(-Long, -Lat)
-head(gpdd_location_temperature)
-devtools::use_data(gpdd_location_temperature)
-setwd("..")
-install("rgpddPlusTraits")
-install("rgpddPlusTraits")
-install("rgpddPlusTraits")
-getwd()
-create("cats")
-install("rgpddPlusTraits")
-install("rgpddPlusTraits")
-install("rgpddPlusTraits")
-install_github("rgpddPlusTraits","daan4786")
-install_github("rgpddPlusTraits","daan4786/rgpddPlusTraits")
+#collect dfs#
+with_groups_corr <- rbind(aves_corr_df, fish_corr_df, ins_corr_df, mam_corr_df, uni_corr_df, zoo_corr_df)#
+#
+within_mass <- ggplot() + geom_point(data = aves_corr_df, aes(x = log(Mass_kg), y = log(Cycle_length_yr), color = "a"), size = 3) + geom_smooth(data = aves_corr_df, aes(x = log(Mass_kg), y = log(Cycle_length_yr), color = "a"), method = "lm", se = F) + geom_point(data = fish_corr_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), size = 3) + geom_smooth(data = fish_corr_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "b"), method = "lm", se = F) + geom_point(data = ins_corr_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), size = 3) + geom_smooth(data = ins_corr_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "c"), method = "lm", se = F) +  geom_point(data = mam_corr_df, aes(x = log(Mass_kg), y = log(Cycle_length_yr), color = "d"), size = 3) + geom_smooth(data = mam_corr_df, aes(x = log(Mass_kg), y = log(Cycle_length_yr), color = "d"), method = "lm", se = F) +  geom_point(data = uni_corr_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "e"), size = 3) + geom_smooth(data = uni_corr_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "e"), method = "lm", se = F)  + geom_point(data = zoo_corr_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "f"), size = 3) + geom_smooth(data = zoo_corr_df, aes(x = log(Mass_kg), y = log(tempcorr), color = "f"), method = "lm", se = F) + ylab("log Temperature corrected period (yr/exp(C))") + xlab("log Mass (kg)") + scale_color_manual(name = "Group", values = c("a" = "red", "b" = "turquoise", "c" = "blue", "d" = "purple", "e" = "orange", "f" = "pink"), labels = c("Aves", "Fish", "Insecta", "Mammalia", "Protist", "Zooplankton")) + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none") + guides(color = guide_legend(title = "Group:"))#
+#
+within_temp <- ggplot() + geom_point(data = fish_corr_df, aes(x = Temp, y = log(masscorr), color = "b"), size = 3) + geom_smooth(data = fish_corr_df, aes(x = Temp, y = log(masscorr), color = "b"), method = "lm", se = F) + geom_point(data = ins_corr_df, aes(x = Temp, y = log(masscorr), color = "c"), size = 3) + geom_smooth(data = ins_corr_df, aes(x = Temp, y = log(masscorr), color = "c"), method = "lm", se = F)  +  geom_point(data = uni_corr_df, aes(x = Temp, y = log(masscorr), color = "e"), size = 3) + geom_smooth(data = uni_corr_df, aes(x = Temp, y = log(masscorr), color = "e"), method = "lm", se = F)  + geom_point(data = zoo_corr_df, aes(x = Temp, y = log(masscorr), color = "f"), size = 3) + geom_smooth(data = zoo_corr_df, aes(x = Temp, y = log(masscorr), color = "f"), method = "lm", se = F) + scale_color_manual(name = "Group", values = c("a" = "red", "b" = "turquoise", "c" = "blue", "d" = "purple", "e" = "orange", "f" = "pink"), labels = c("Aves", "Fish", "Insecta", "Mammalia", "Protist", "Zooplankton")) + ylab("log Mass corrected period (yr/M^b))") + xlab("Temperature (C)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "none") + guides(color = guide_legend(title = "Method:"))#
+#
+grid.arrange(within_mass, within_temp, nrow = 1)
+within_temp <- ggplot() + geom_point(data = fish_corr_df, aes(x = Temp, y = log(masscorr), color = "b"), size = 3) + geom_smooth(data = fish_corr_df, aes(x = Temp, y = log(masscorr), color = "b"), method = "lm", se = F) + geom_point(data = ins_corr_df, aes(x = Temp, y = log(masscorr), color = "c"), size = 3) + geom_smooth(data = ins_corr_df, aes(x = Temp, y = log(masscorr), color = "c"), method = "lm", se = F)  +  geom_point(data = uni_corr_df, aes(x = Temp, y = log(masscorr), color = "e"), size = 3) + geom_smooth(data = uni_corr_df, aes(x = Temp, y = log(masscorr), color = "e"), method = "lm", se = F)  + geom_point(data = zoo_corr_df, aes(x = Temp, y = log(masscorr), color = "f"), size = 3) + geom_smooth(data = zoo_corr_df, aes(x = Temp, y = log(masscorr), color = "f"), method = "lm", se = F) + scale_color_manual(name = "Group", values = c("a" = "red", "b" = "turquoise", "c" = "blue", "d" = "purple", "e" = "orange", "f" = "pink"), labels = c("Aves", "Fish", "Insecta", "Mammalia", "Protist", "Zooplankton")) + ylab("log Mass corrected period (yr/M^b))") + xlab("Temperature (C)") + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line.x = element_line(color = "black"), axis.line.y = element_line(color = "black"), text = element_text(size = 15), legend.position = "bottom") + guides(color = guide_legend(title = "Method:"))
+grid.arrange(within_mass, within_temp, nrow = 1)
+ins_corr_df
+within_groups_expons_6_mb
+within_groups_expons_6
+within_groups_expons_6 <- lit_cycles %>% filter((Cycle_length_yr / age_first_reproduction_years) > 6 & Class != "Aves" & Class != "Mammalia") %>% group_by(Class) %>% do(tidy(lm(log(Cycle_length_yr) ~ log(Mass_kg) + Temp, data = .))) %>% data.frame()
+within_groups_expons_6
 ?install_github
-install_github('rgpddPlusTraits','daan4786')
-install_github('rgpddPlusTraits','daan4786')
-life_history <- read.csv("~/Documents/rgpddPlusTraits/data-raw/GPDD_taxon_traits.csv", stringsAsFactors=F)
-devtools::use_data(life_history)
-setwd("/Users/daan4786/Documents/rgpddPlusTraits")
-devtools::use_data(life_history)
-temperature <- read.csv("~/Documents/rgpddPlusTraits/data-raw/Avg_wc_temp_for_GPDD_pops.csv", stringsAsFactors=F)
-devtools::use_data(temperature)
-head(life_history)
-colnames(life_history)
-life_history_sources <- dplyr::select(TaxonID, Reference_Body_Temperature, Notes_Temp, Reference_Body_Mass, Notes_mass, Reference_metabolic_rate, Notes_MR, Reference_age_first_reproduction, Notes_age_first_reproduction, Ref_PrimaryDiet, Reference_average_lifespan, Notes_avg_lifespan, Reference_lifespan, Notes_lifespan)
-life_history_sources <- life_history %>% dplyr::select(TaxonID, Reference_Body_Temperature, Notes_Temp, Reference_Body_Mass, Notes_mass, Reference_metabolic_rate, Notes_MR, Reference_age_first_reproduction, Notes_age_first_reproduction, Ref_PrimaryDiet, Reference_average_lifespan, Notes_avg_lifespan, Reference_lifespan, Notes_lifespan)
-life_history_sources <- life_history %>% dplyr::select(TaxonID, Reference_Body_Temperature, Notes_Temp, Reference_Body_mass, Notes_mass, Reference_metabolic_rate, Notes_MR, Reference_age_first_reproduction, Notes_age_first_reproduction, Ref_PrimaryDiet, Reference_average_lifespan, Notes_avg_lifespan, Reference_lifespan, Notes_lifespan)
-head(life_history_sources)
-colnames(life_history)
-life_history <- life_history %>% dplyr::select(TaxonID, Thermo, Mass_kg, Temp, Class_or_species, MSMR_W_g, Average_Lifespan_years, Lifespan, age_first_reproduction_years, PrimaryDiet, TrophicLevel)
-devtools::use_data(life_history)
-devtools::use_data(life_history_sources)
-temperature <- read.csv("~/Documents/rgpddPlusTraits/data-raw/Avg_wc_temp_for_GPDD_pops.csv", stringsAsFactors=F)
-devtools::use_data(temperature)
-gpdd_taxon_life_history <- function(gpdd_taxon){#
-#
-	df <- dplyr::left_join(rgpdd::gpdd_taxon, life_history, by = "TaxonID")#
-	return(df)#
-}
-gpdd_taxon_life_history(gpdd_taxon)
