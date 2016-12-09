@@ -15,25 +15,25 @@ For more information on the package 'rgpdd,' see https://github.com/ropensci/rgp
 
 ```
 library(devtools)
-devtools::install_github("rgpddPlusTraits")
+devtools::install_github("daan4786/rgpddPlusTraits")
 library(rgpddPlusTraits)
 
 # While rgpddPlusTraits has functions to integrate the trait/temperature data with the GPDD meta data tables, 
 # in order to work with the actual time series data you must load the package rgpdd.
-devtools::install_github("rgpdd")
+devtools::install_github("ropensci/rgpdd")
 library(rgpdd)
 
 library(dplyr)
 library(ggplot2)
 ```
 
-### Integrate life history data with gpdd main table using function available in rgpddPlusTraits.
+### Integrate life history data with gpdd main table using function available in rgpddPlusTraits:
 ```
 life_history <- gpdd_taxon_life_history(taxon=TRUE, main=TRUE, sources=FALSE)
 ```
-### An example analysis looking at the body mass dependence of average abundance of mammals, birds, and fish.
+### An example analysis looking at the effect of body mass on average abundance of mammals, birds, and fish:
 ```
-# Calculate average population size of each time series, which are in the rgpdd package data table gpdd_data 
+# Calculate average population size of each time series 
 avg_abundance <- rgpdd::gpdd_data %>% group_by(MainID) %>% summarize(avg_abundance = mean(PopulationUntransformed)) 
 
 # Join with life history data for plotting
