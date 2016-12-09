@@ -7,8 +7,9 @@
 gpdd_location_temperature(location = FALSE, main = TRUE)
 }
 \arguments{
-\item{location}{Do you want to include information on location of the population from the gpdd_location data table? Default is FALSE.
-main Do you want to include information on time series from the gpdd_main data table? Default is TRUE.}
+\item{location}{Do you want to include information on location of the population from the gpdd_location data table? Default is FALSE.}
+
+\item{main}{Do you want to include information on time series from the gpdd_main data table? Default is TRUE.}
 }
 \description{
 This function calls the location data table from rgpdd, and joins it with the temperature data using the LocationID index. 

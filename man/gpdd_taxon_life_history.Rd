@@ -7,9 +7,11 @@
 gpdd_taxon_life_history(taxon = FALSE, main = TRUE, sources = FALSE)
 }
 \arguments{
-\item{taxon}{Do you want to include taxonomic information from the gpdd_taxon data table? Default is FALSE
-main Do you want to include information on time series from the gpdd_main data table? Default is TRUE.
-source Do you want to include information on data sources for the life history data? Default is FALSE.}
+\item{taxon}{Do you want to include taxonomic information from the gpdd_taxon data table? Default is FALSE.}
+
+\item{main}{Do you want to include information on time series from the gpdd_main data table? Default is TRUE.}
+
+\item{source}{Do you want to include information on data sources for the life history data? Default is FALSE.}
 }
 \description{
 This function calls the taxonomic data table from rgpdd, and joins it with the life history data using the TaxonID index. 
