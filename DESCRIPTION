@@ -4,6 +4,9 @@ Version: 0.0.0.9000
 Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
 Description: This package contains species-specific data on basic life history traits including body mass, body temperature, lifespan, trophic level, and age at first reproduction for all vertebrate populations in the Global Population Dynamics Database. In addition, I have included average monthly temperatures at the location of each population. This package is designed to integrate the trait data with the population dynamic time series in order to facilitate analyses. 
 Depends: R (>= 3.2.2)
+Imports:
+	dplyr,
+	rgpdd
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true

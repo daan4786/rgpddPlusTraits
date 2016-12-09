@@ -2,7 +2,7 @@
 % Please edit documentation in R/integrate_gpdd_life_history.R
 \name{gpdd_taxon_life_history}
 \alias{gpdd_taxon_life_history}
-\title{A function to integrate GPDD time series data with trait data.}
+\title{A function to join GPDD time series data with trait data.}
 \usage{
 gpdd_taxon_life_history(taxon = FALSE, main = TRUE, sources = FALSE)
 }
@@ -11,7 +11,7 @@ gpdd_taxon_life_history(taxon = FALSE, main = TRUE, sources = FALSE)
 
 \item{main}{Do you want to include information on time series from the gpdd_main data table? Default is TRUE.}
 
-\item{source}{Do you want to include information on data sources for the life history data? Default is FALSE.}
+\item{sources}{Do you want to include information on data sources for the life history data? Default is FALSE.}
 }
 \description{
 This function calls the taxonomic data table from rgpdd, and joins it with the life history data using the TaxonID index. 

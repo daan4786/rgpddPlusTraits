@@ -1,4 +1,4 @@
-#' A function to integrate GPDD time series data with temperature data.
+#' A function to join GPDD time series data with temperature data.
 #'
 #' This function calls the location data table from rgpdd, and joins it with the temperature data using the LocationID index. 
 #' In addition, this function can be used to join to the GPDD main data table, which contains indexes for all other data tables.
@@ -9,7 +9,9 @@
 #' head(data)
 #' data_main <- gpdd_location_temperature(location=TRUE, main=TRUE) #include both location meta data and main table.
 #' head(data_main)
-
+#' @import dplyr
+#' @import rgpdd
+#' @export
 gpdd_location_temperature <- function(location=FALSE,main=TRUE){
 	
 	if(location == TRUE){

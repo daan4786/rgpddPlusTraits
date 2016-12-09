@@ -2,7 +2,7 @@
 % Please edit documentation in R/integrate_gpdd_temperature.R
 \name{gpdd_location_temperature}
 \alias{gpdd_location_temperature}
-\title{A function to integrate GPDD time series data with temperature data.}
+\title{A function to join GPDD time series data with temperature data.}
 \usage{
 gpdd_location_temperature(location = FALSE, main = TRUE)
 }
