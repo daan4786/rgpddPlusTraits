@@ -1,6 +1,6 @@
 # rgpddPlusTraits
 
-The purpose of this package is to integrate species-specific life history data for mammal, bird, and fish species and location-specific data on average monthly temperature with the Global Population Dynamics Database. Global Population Dynamics Database time series data and metadata are accessed through the package 'rgpdd.' Functions were created in order to easily integrate time series data with life history and temperature data.
+The purpose of this package is to join species-specific life history data for mammal, bird, and fish species and location-specific data on average monthly temperature with the Global Population Dynamics Database. Global Population Dynamics Database time series data and metadata are accessed through the package 'rgpdd.' Functions were created in order to easily join time series data with life history and temperature data.
 
 These life history data were assembled from various published sources, however this data compilation is not itself published. The developers of the Global Population Dynamics Database and the R package 'rgpdd' are not responsible for the accuracy of this data.
 
@@ -41,8 +41,8 @@ avg_abundance_life_history <- dplyr::left_join(avg_abundance, life_history, by =
 
 ggplot(dplyr::filter(avg_abundance_life_history, DatasetLength > 20, (TaxonomicClass == "Mammalia" | TaxonomicClass == "Aves" | TaxonomicClass == "Osteichthyes"))) + 
 geom_point(aes(x = Mass_kg, y = avg_abundance, color = TaxonomicClass)) + 
-geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F, color = "black")
-+ scale_x_log10() + scale_y_log10() + ylab("Average abundance (variable spatial units)") + xlab("Body Mass (kg)")
+geom_smooth(aes(x = Mass_kg, y = avg_abundance), method = "lm", se = F, color = "black") +
+scale_x_log10() + scale_y_log10() + ylab("Average abundance (variable spatial units)") + xlab("Body Mass (kg)")
 ```
 
 ![example_plot](https://cloud.githubusercontent.com/assets/18072450/21020919/6b30d8e2-bd44-11e6-9cd5-ec71e2178071.png)
