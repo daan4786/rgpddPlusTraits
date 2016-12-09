@@ -14,6 +14,7 @@ For more information on the package 'rgpdd,' see https://github.com/ropensci/rgp
 ### Install and load package:
 
 ```
+library(devtools)
 devtools::install_github("rgpddPlusTraits")
 library(rgpddPlusTraits)
 
