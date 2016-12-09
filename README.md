@@ -1,10 +1,10 @@
 # rgpddPlusTraits
 
-The purpose of this package is to join species-specific life history trait data for mammal, bird, and fish species and location-specific data on average monthly temperature with the time series data in the Global Population Dynamics Database. Time series data and metadata are accessed through the package 'rgpdd.' Two functions were created in order to easily join time series data with life history and temperature data.
+The purpose of this package is to make available species-specific life history trait information for mammal, bird, and fish species in the global population dynamics database (GPDD). In addition, location-specific data on average monthly and annual temperature are included in a separate data file. These data are indexed with identification numbers for the GPDD metadata tables. This package is designed to interface with the package 'rgpdd,' which contains all data tables from the original GPDD. Functions were created in order to easily join life history and temperature data with individual time series data and metadata from the 'rgpdd'.
 
 Life history data were assembled manually from various published sources, however this data compilation is not itself published. The developers of the Global Population Dynamics Database and the R package 'rgpdd' are not responsible for the accuracy of this data.
 
-For more information on the Gloabl Population Dynamics Database, see http://www3.imperial.ac.uk/cpb/databases/gpdd.
+For more information on the Gloabl Population Dynamics Database and metadata organization, see http://www3.imperial.ac.uk/cpb/databases/gpdd.
 
 For more information on the package 'rgpdd,' see https://github.com/ropensci/rgpdd. 
 
